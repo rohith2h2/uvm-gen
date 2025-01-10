@@ -1,0 +1,35 @@
+// Driver for {{ module.name }}
+class {{ module.name }}_driver extends uvm_driver #({{ module.name }}_transaction);
+    `uvm_component_utils({{ module.name }}_driver)
+
+    virtual {{ module.name }}_if vif;
+    {{ module.name }}_config cfg;
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        if (!uvm_config_db #({{ module.name }}_config)::get(this, "", "config", cfg))
+            `uvm_fatal("DRV", "Failed to get config")
+    endfunction
+
+    task run_phase(uvm_phase phase);
+        forever begin
+            seq_item_port.get_next_item(req);
+            drive_transaction(req);
+            seq_item_port.item_done();
+        end
+    endtask
+
+    task drive_transaction({{ module.name }}_transaction tr);
+        @(vif.DRV);
+        {% for port in module.ports %}
+        {% if port.direction == 'input' %}
+        vif.{{ port.name }} = tr.{{ port.name }};
+        {% endif %}
+        {% endfor %}
+    endtask
+
+endclass 

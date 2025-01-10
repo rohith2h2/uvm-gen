@@ -1,0 +1,30 @@
+// UVM scoreboard for {{ module.name }}
+class {{ module.name }}_scoreboard extends uvm_scoreboard;
+    `uvm_component_utils({{ module.name }}_scoreboard)
+
+    uvm_analysis_imp #({{ module.name }}_transaction, {{ module.name }}_scoreboard) item_collected_export;
+    {{ module.name }}_transaction tr_q[$];
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+        item_collected_export = new("item_collected_export", this);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+    endfunction
+
+    function void write({{ module.name }}_transaction tr);
+        tr_q.push_back(tr);
+        check_result();
+    endfunction
+
+    function void check_result();
+        {{ module.name }}_transaction tr;
+        if(tr_q.size() > 0) begin
+            tr = tr_q.pop_front();
+            // Add your checking logic here
+            `uvm_info("SCOREBOARD", $sformatf("Transaction received: %s", tr.convert2string()), UVM_LOW)
+        end
+    endfunction
+endclass 

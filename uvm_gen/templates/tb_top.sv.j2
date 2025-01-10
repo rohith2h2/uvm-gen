@@ -1,0 +1,44 @@
+// UVM Testbench Top template 
+
+// Testbench top for {{ module.name }}
+module {{ module.name }}_tb_top;
+    import uvm_pkg::*;
+    import {{ module.name }}_pkg::*;
+    `include "uvm_macros.svh"
+
+    // Clock and reset
+    bit clk;
+    bit rst_n;
+
+    // Interface instance
+    {{ module.name }}_if dut_if();
+
+    // DUT instance
+    {{ module.name }} dut (
+        {% for p in module.ports %}
+        .{{ p.name }}(dut_if.{{ p.name }}){% if not loop.last %},{% endif %}
+        {% endfor %}
+    );
+
+    // Clock generation
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // Reset generation
+    initial begin
+        rst_n = 0;
+        #100 rst_n = 1;
+    end
+
+    // UVM test
+    initial begin
+        {{ module.name }}_config cfg;
+        cfg = new("cfg");
+        cfg.vif = dut_if;
+        uvm_config_db #({{ module.name }}_config)::set(null, "*", "config", cfg);
+        run_test();
+    end
+
+endmodule 

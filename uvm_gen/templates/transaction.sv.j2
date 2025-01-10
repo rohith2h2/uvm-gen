@@ -1,0 +1,28 @@
+// Transaction for {{ module.name }}
+class {{ module.name }}_transaction extends uvm_sequence_item;
+    `uvm_object_utils({{ module.name }}_transaction)
+
+    {% for p in module.ports %}
+    rand logic [{{ p.width-1 }}:0] {{ p.name }};
+    {% endfor %}
+
+    constraint valid_values {
+        {% for p in module.ports %}
+        {{ p.name }} inside {[0:((1<<{{ p.width }})-1)]};
+        {% endfor %}
+    }
+
+    function new(string name = "{{ module.name }}_transaction");
+        super.new(name);
+    endfunction
+
+    function string convert2string();
+        string s;
+        s = $sformatf("Transaction: ");
+        {% for p in module.ports %}
+        s = {s, $sformatf("{{ p.name }}=%0h ", {{ p.name }})};
+        {% endfor %}
+        return s;
+    endfunction
+
+endclass 

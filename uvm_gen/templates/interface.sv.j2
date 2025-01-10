@@ -1,0 +1,21 @@
+// Interface for {{ module.name }}
+interface {{ module.name }}_if;
+    {% for port in module.ports %}
+    logic [{{ port.width-1 }}:0] {{ port.name }};
+    {% endfor %}
+
+    // Modport for driver
+    modport DRV(
+        {% for port in module.ports %}
+        {% if port.direction == 'input' %}output{% else %}input{% endif %} {{ port.name }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    );
+
+    // Modport for monitor
+    modport MON(
+        {% for port in module.ports %}
+        input {{ port.name }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    );
+
+endinterface 

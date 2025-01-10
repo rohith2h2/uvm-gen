@@ -1,0 +1,12 @@
+// UVM sequencer for {{ module.name }}
+class {{ module.name }}_sequencer extends uvm_sequencer #({{ module.name }}_transaction);
+    `uvm_component_utils({{ module.name }}_sequencer)
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+    endfunction
+endclass 

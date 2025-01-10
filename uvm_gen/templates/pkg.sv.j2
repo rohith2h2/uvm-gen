@@ -1,0 +1,58 @@
+// Package for {{ module.name }}
+package {{ module.name }}_pkg;
+    import uvm_pkg::*;
+    `include "uvm_macros.svh"
+
+    // Include all UVM components
+    `include "{{ module.name }}_config.sv"
+    `include "{{ module.name }}_transaction.sv"
+    `include "{{ module.name }}_sequence.sv"
+    `include "{{ module.name }}_driver.sv"
+    `include "{{ module.name }}_monitor.sv"
+    `include "{{ module.name }}_sequencer.sv"
+    `include "{{ module.name }}_agent.sv"
+    `include "{{ module.name }}_scoreboard.sv"
+    `include "{{ module.name }}_env.sv"
+    `include "{{ module.name }}_test.sv"
+
+    // Interface definition
+    interface {{ module.name }}_if;
+        {% for p in module.ports %}
+        logic [{{ p.width-1 }}:0] {{ p.name }};
+        {% endfor %}
+    endinterface
+
+    // Transaction class
+    class {{ module.name }}_transaction extends uvm_sequence_item;
+        `uvm_object_utils({{ module.name }}_transaction)
+        
+        {% for p in module.ports %}
+        rand logic [{{ p.width-1 }}:0] {{ p.name }};
+        {% endfor %}
+
+        function new(string name = "{{ module.name }}_transaction");
+            super.new(name);
+        endfunction
+
+        function string convert2string();
+            string s;
+            s = $sformatf("Transaction: ");
+            {% for p in module.ports %}
+            s = {s, $sformatf("{{ p.name }}=%0h ", {{ p.name }})};
+            {% endfor %}
+            return s;
+        endfunction
+    endclass
+
+    // Configuration class
+    class {{ module.name }}_config extends uvm_object;
+        `uvm_object_utils({{ module.name }}_config)
+        
+        virtual {{ module.name }}_if vif;
+        
+        function new(string name = "{{ module.name }}_config");
+            super.new(name);
+        endfunction
+    endclass
+
+endpackage 

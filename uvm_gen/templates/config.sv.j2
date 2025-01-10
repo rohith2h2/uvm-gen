@@ -1,0 +1,14 @@
+// Configuration for {{ module.name }}
+class {{ module.name }}_config extends uvm_object;
+    `uvm_object_utils({{ module.name }}_config)
+
+    virtual {{ module.name }}_if vif;
+    {% for p in module.params %}
+    {{ p.type }} {{ p.name }} = {{ p.default }};
+    {% endfor %}
+
+    function new(string name = "{{ module.name }}_config");
+        super.new(name);
+    endfunction
+
+endclass 

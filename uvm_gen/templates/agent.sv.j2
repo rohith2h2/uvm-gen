@@ -1,0 +1,30 @@
+// UVM agent for {{ module.name }}
+class {{ module.name }}_agent extends uvm_agent;
+    `uvm_component_utils({{ module.name }}_agent)
+
+    {{ module.name }}_driver    driver;
+    {{ module.name }}_sequencer sequencer;
+    {{ module.name }}_monitor   monitor;
+    virtual {{ module.name }}_if vif;
+
+    function new(string name, uvm_component parent);
+        super.new(name, parent);
+    endfunction
+
+    function void build_phase(uvm_phase phase);
+        super.build_phase(phase);
+        
+        driver = {{ module.name }}_driver::type_id::create("driver", this);
+        sequencer = {{ module.name }}_sequencer::type_id::create("sequencer", this);
+        monitor = {{ module.name }}_monitor::type_id::create("monitor", this);
+    endfunction
+
+    function void connect_phase(uvm_phase phase);
+        super.connect_phase(phase);
+        driver.seq_item_port.connect(sequencer.seq_item_export);
+        
+        // Connect virtual interface
+        driver.vif = vif;
+        monitor.vif = vif;
+    endfunction
+endclass 

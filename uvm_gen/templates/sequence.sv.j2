@@ -1,0 +1,19 @@
+// Sequence for {{ module.name }}
+class {{ module.name }}_sequence extends uvm_sequence #({{ module.name }}_transaction);
+    `uvm_object_utils({{ module.name }}_sequence)
+
+    function new(string name = "{{ module.name }}_sequence");
+        super.new(name);
+    endfunction
+
+    task body();
+        {{ module.name }}_transaction tr;
+        repeat(10) begin
+            tr = {{ module.name }}_transaction::type_id::create("tr");
+            start_item(tr);
+            assert(tr.randomize());
+            finish_item(tr);
+        end
+    endtask
+
+endclass 
